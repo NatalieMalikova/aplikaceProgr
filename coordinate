@@ -1,0 +1,33 @@
+import os
+import csv
+from osgeo import gdal
+from osgeo import osr
+from osgeo import ogr
+
+# Coordinate Reference System (CRS)
+SourceEPSG = 4326  
+TargetEPSG = 2193
+
+source = osr.SpatialReference()
+source.ImportFromEPSG(SourceEPSG)
+
+target = osr.SpatialReference()
+target.ImportFromEPSG(TargetEPSG)
+
+
+# Input file details
+fullpath = os.path.abspath("\ew0001\NavigationsCMP")
+
+def CRSTransform(Lat, Long):
+    transform = osr.CoordinateTransformation(source, target)
+    point = ogr.CreateGeometryFromWkt("POINT ("+Lat+" "+Long+")")
+    point.Transform(transform)
+    print point.GetX(), "   ", point.GetY()
+
+
+print "Reading CSV"
+inCSV = csv.DictReader(open(fullpath+".csv"))
+for row in inCSV:
+    lat = row['Lat']
+    long = row['Long']
+    CRSTransform(lat, long)
