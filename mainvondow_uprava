@@ -1,0 +1,52 @@
+import sys
+from typing import Optional
+
+from PyQt5.QtCore import QSettings
+from PyQt5.QtGui import (QResizeEvent, QMoveEvent)
+from PyQt5.QtWidgets import (QApplication, QWidget, QAction, QMainWindow, QMenu, QTextEdit, QFormLayout)
+
+
+class MainWindow(QMainWindow):
+
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        super(MainWindow, self).__init__(parent)
+
+        self.setWindowTitle("Aplikace s nastavením")
+        self.settings = QSettings()
+
+        self.ds = None
+
+        self.init_gui()
+
+  # karta v okne... Aplikace->exit
+    def init_gui(self):
+        menu = QMenu('Aplikace', self)
+        self.menuBar().addMenu(menu)
+
+        self.action_end = QAction("Ukončit", self)
+        self.action_end.triggered.connect(self.exit)
+
+        menu.addAction(self.action_end)
+
+        widget = QWidget()
+        self.setCentralWidget(widget)
+        layout = QFormLayout()
+        widget.setLayout(layout)
+
+        self.inputX = QTextEdit()
+        self.inputY = QTextEdit()
+
+        layout.addRow("Souřadnice X", self.inputX)
+        layout.addRow("Souřadnice Y", self.inputY)
+
+
+    def exit(self):
+        app = QApplication.instance()
+        app.quit()
+
+if __name__ == "__main__":
+
+    app = QApplication(sys.argv)
+    mw = MainWindow()
+    mw.show()
+    sys.exit(app.exec())
